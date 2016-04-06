@@ -1,0 +1,203 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+`<iron-pullable-container>` is a container that can be pulled to provide a possible action. 
+It supports a vertical transition, and the transition duration and properties
+can be customized. You can also add a configurable spinner when the action is underway.
+
+Example:
+
+    <iron-pullable-container>
+      <h1>Pull Me!</div>
+    </iron-pullable-container>
+
+It is a good idea to disable text selection in the container:
+
+    .swipe {
+      -moz-user-select: none;
+      -ms-user-select: none;
+      -webkit-user-select: none;
+      user-select: none;
+      cursor: default;
+    }
+
+### Styling
+
+The following custom properties / mixins are available for styling:
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--` | Color of refresh icon. | `#ccc`
+
+@element iron-pullable-container
+@demo demo/index.html Standard Demo
+-->
+
+<dom-module id="iron-pullable-container">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      #ipcWrapper {
+        position: relative;
+        height: 100%;
+      }
+      #ipcBackground {
+        /* TODO: change default color */
+        background-color: grey;
+        text-align: center;
+        /*@apply()*/
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+      }
+      #ipcContainer {
+        /* TODO: change default color */
+        background-color: white;
+        width: 100%;
+        height: 100%;
+        will-change: top, transform;
+      }
+    </style>
+    <div id="ipcWrapper">
+      <div id="ipcBackground">
+        [[_computePullLabel()]]
+        <!-- TODO: enable custom spinner -->
+        <!-- <content select=".spinner"> -->
+      </div>
+      <div id="ipcContainer">      
+        <content select=":not(.spinner)"></content>
+      </div>
+    </div>
+  </template>
+</dom-module>
+
+<script>
+
+  Polymer({
+    is: 'iron-pullable-container',
+
+    /**
+     * Fired when the threshold has been reached.
+     *
+     * @event iron-pull
+     */
+
+    properties: {
+      /**
+       * If true, then the container will not allow swiping.
+       */
+      disabled: {
+        type: Boolean,
+        value: false
+      },
+
+      /**
+       * The height of the pull area that acts as a threshold value.
+       */
+      pullHeight: {
+        type: Number,
+        value: 50
+      },
+
+      /**
+       * The CSS transition applied while pulling back.
+       */
+      transition: {
+        type: String,
+        value: 'height,transform 500ms cubic-bezier(0.4, 0.0, 0.2, 1)'
+      },
+
+      // TODO: Add a tooltip option 
+      // TODO: Add 2 text label
+    },
+
+    listeners: {
+      'track': '_onTrack'
+    },
+
+    ready: function() {
+      this._pullComplete = false;
+      this.setScrollDirection('x');
+    },
+
+    attached: function() {
+      this.listen(this.$.ipcContainer, 'webkitTransitionEnd', '_onTransitionEnd');
+      this.listen(this.$.ipcContainer, 'transitionend', '_onTransitionEnd');
+    },
+
+    detached: function() {
+      this.unlisten(this.$.ipcContainer, 'webkitTransitionEnd', '_onTransitionEnd');
+      this.unlisten(this.$.ipcContainer, 'transitionend', '_onTransitionEnd');
+    },
+
+    _onTrack: function(event) {
+      if (this.disabled)
+        return;
+
+      var track = event.detail;
+      if (track.state === 'start' && Math.abs(track.dx) < Math.abs(track.dy)) {
+        this._pullStarted = true;
+        this._trackStart(track);
+      } else if (track.state === 'track' && this._pullStarted) {
+        this._trackMove(track);
+      } else if (track.state === 'end' && this._pullStarted) {
+        this._trackEnd(track);
+      }
+    },
+
+    _trackStart: function(event) {
+      this.$.ipcContainer.style.transition = 'none';
+      this.$.ipcContainer.style.webkitTransition = 'none';
+
+      // Prevent regular touchmove event (disables vertical scroll)
+      window.addEventListener('touchmove', this._preventTouchMove);
+      this._animate(event.dy);
+    },
+
+    _trackMove: function(event) {
+      this._animate(event.dy);
+    },
+
+    _trackEnd: function(event) {
+      if (!this._pullStarted) {
+        return;
+      }
+      // The element is pulled if it's moved past the height.
+      this._pullComplete = Math.abs(event.dy) > this.pullHeight;
+      // Restore the configured transition;
+      this.$.ipcContainer.style.transition = this.transition;
+      this.$.ipcContainer.style.webkitTransition = this.transition;
+
+      if (this._pullComplete) {
+        this._animate(this.pullHeight);
+      } else {
+        this._animate(0);
+      }
+    },
+
+    _animate: function(y) {
+      this.$.ipcContainer.style.height = (this.offsetHeight - y) + "px";
+      this.translate3d('0px', y+'px', '0px', this.$.ipcContainer);
+    },
+
+    _onTransitionEnd: function(event) {
+      if (this._pullComplete) {
+        this.fire('iron-pull');
+        this.async(function() {
+          this._animate(0, this.$.ipcContainer);
+        }, 1000);
+        this._pullComplete = false;
+      }
+      this._pullStarted = false;
+    },
+
+    // Helper functions
+    _computePullLabel: function() {
+      return "Pull me Baby! :)";
+    }
+
+  });
+</script>

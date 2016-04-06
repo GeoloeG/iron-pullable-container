@@ -1,0 +1,50 @@
+{
+  "name": "iron-pullable-container",
+  "version": "0.1.0",
+  "authors": [
+    "Pascal Gula aka MeTaNoV <pascal.gula@gmail.com>"
+  ],
+  "description": "A container that alows any of its nested children to be swiped away.",
+  "keywords": [
+    "web-component",
+    "web-components",
+    "web",
+    "component",
+    "components",
+    "custom",
+    "element",
+    "polymer",
+    "iron",
+    "container",
+    "pull",
+    "pullable",
+    "action",
+    "refresh",
+    "mobile"
+  ],
+  "main": "iron-pullable-container.html",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/MeTaNoV/iron-pullable-container.git"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/MeTaNoV/iron-pullable-pages/",
+  "ignore": [
+    "/.*",
+    "/test/",
+    "/demo/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.1.0",
+    "spinkit": "spinkit#^1.2.0"
+  },
+  "devDependencies": {
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0",
+    "web-component-tester": "^4.0.0",
+    "iron-component-page": "MeTaNoV/iron-component-page#multiple-demo",
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.0.0",
+    "iron-test-helpers": "PolymerElements/iron-test-helpers#^1.0.0",
+    "paper-styles": "PolymerElements/paper-styles#^1.0.0"
+  }
+}
