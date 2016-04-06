@@ -1,14 +1,13 @@
 <link rel="import" href="../polymer/polymer.html">
-
 <!--
-`<iron-pullable-container>` is a container that can be pulled to provide a possible action. 
+`<iron-pullable-container>` is a container that can be pulled to provide a possible action.
 It supports a vertical transition, and the transition duration and properties
-can be customized. You can also add a configurable spinner when the action is underway.
+can be customized. You can also add a configurable spinner when the action is ongoing.
 
 Example:
 
     <iron-pullable-container>
-      <h1>Pull Me!</div>
+      <h1>Pull Me!</h1>
     </iron-pullable-container>
 
 It is a good idea to disable text selection in the container:
@@ -27,47 +26,49 @@ The following custom properties / mixins are available for styling:
 
 Custom property | Description | Default
 ----------------|-------------|----------
-`--` | Color of refresh icon. | `#ccc`
+`--iron-pullable-container` | Mixin applied to the element. | `{}`
+`--iron-pullable-container-underlay` | Mixin applied to the underlay part. | `{}`
 
 @element iron-pullable-container
 @demo demo/index.html Standard Demo
 -->
-
 <dom-module id="iron-pullable-container">
   <template>
     <style>
       :host {
         display: block;
-      }
-      #ipcWrapper {
         position: relative;
+        box-sizing: border-box;
+        @apply(--iron-pullable-container);
+      }
+      #container {
         height: 100%;
       }
-      #ipcBackground {
-        /* TODO: change default color */
-        background-color: grey;
+      #underlay {
         text-align: center;
-        /*@apply()*/
+        background-color: var(--light-primary-color);
+        @apply(--iron-pullable-container);
         position: absolute;
-        width: 100%;
-        height: 100%;
         top: 0;
+        height: 100%;
+        width: 100%;
+        will-change: height;
       }
-      #ipcContainer {
-        /* TODO: change default color */
-        background-color: white;
+      #content {
+        background-color: var(--primary-background-color);
+        position: absolute;
+        bottom: 0;
         width: 100%;
         height: 100%;
-        will-change: top, transform;
+        will-change: height;
       }
     </style>
-    <div id="ipcWrapper">
-      <div id="ipcBackground">
-        [[_computePullLabel()]]
+    <div id="container">
+      <div id="underlay">
         <!-- TODO: enable custom spinner -->
         <!-- <content select=".spinner"> -->
       </div>
-      <div id="ipcContainer">      
+      <div id="content">
         <content select=":not(.spinner)"></content>
       </div>
     </div>
@@ -105,12 +106,17 @@ Custom property | Description | Default
       /**
        * The CSS transition applied while pulling back.
        */
-      transition: {
+      transitionDuration: {
         type: String,
-        value: 'height,transform 500ms cubic-bezier(0.4, 0.0, 0.2, 1)'
+        value: '500ms'
       },
 
-      // TODO: Add a tooltip option 
+      transitionTimingFunction: {
+        type: String,
+        value: 'cubic-bezier(0.4, 0.0, 0.2, 1)'
+      }
+
+      // TODO: Add a tooltip option
       // TODO: Add 2 text label
     },
 
@@ -124,13 +130,13 @@ Custom property | Description | Default
     },
 
     attached: function() {
-      this.listen(this.$.ipcContainer, 'webkitTransitionEnd', '_onTransitionEnd');
-      this.listen(this.$.ipcContainer, 'transitionend', '_onTransitionEnd');
+      this.listen(this.$.content, 'webkitTransitionEnd', '_onTransitionEnd');
+      this.listen(this.$.content, 'transitionend', '_onTransitionEnd');
     },
 
     detached: function() {
-      this.unlisten(this.$.ipcContainer, 'webkitTransitionEnd', '_onTransitionEnd');
-      this.unlisten(this.$.ipcContainer, 'transitionend', '_onTransitionEnd');
+      this.unlisten(this.$.content, 'webkitTransitionEnd', '_onTransitionEnd');
+      this.unlisten(this.$.content, 'transitionend', '_onTransitionEnd');
     },
 
     _onTrack: function(event) {
@@ -149,8 +155,8 @@ Custom property | Description | Default
     },
 
     _trackStart: function(event) {
-      this.$.ipcContainer.style.transition = 'none';
-      this.$.ipcContainer.style.webkitTransition = 'none';
+      this.$.content.style.transition = 'none';
+      this.$.content.style.webkitTransition = 'none';
 
       // Prevent regular touchmove event (disables vertical scroll)
       window.addEventListener('touchmove', this._preventTouchMove);
@@ -168,8 +174,8 @@ Custom property | Description | Default
       // The element is pulled if it's moved past the height.
       this._pullComplete = Math.abs(event.dy) > this.pullHeight;
       // Restore the configured transition;
-      this.$.ipcContainer.style.transition = this.transition;
-      this.$.ipcContainer.style.webkitTransition = this.transition;
+      this._computeTransition(this.$.content);
+      // this._computeTransition(this.$.underlay);
 
       if (this._pullComplete) {
         this._animate(this.pullHeight);
@@ -179,15 +185,17 @@ Custom property | Description | Default
     },
 
     _animate: function(y) {
-      this.$.ipcContainer.style.height = (this.offsetHeight - y) + "px";
-      this.translate3d('0px', y+'px', '0px', this.$.ipcContainer);
+      var contentHeight = (this.offsetHeight - y) > 0 ? (this.offsetHeight - y) : 0;
+      // var underlayHeight = y > 0 ? y : 0;
+      this.$.content.style.height = contentHeight + "px";
+      // this.$.underlay.style.height = underlayHeight + "px";
     },
 
     _onTransitionEnd: function(event) {
       if (this._pullComplete) {
         this.fire('iron-pull');
         this.async(function() {
-          this._animate(0, this.$.ipcContainer);
+          this._animate(0);
         }, 1000);
         this._pullComplete = false;
       }
@@ -195,9 +203,10 @@ Custom property | Description | Default
     },
 
     // Helper functions
-    _computePullLabel: function() {
-      return "Pull me Baby! :)";
+    _computeTransition: function(node) {
+      node.style.transitionProperty = 'height';
+      node.style.transitionDuration = this.transitionDuration;
+      node.style.transitionTimingFunction = this.transitionTimingFunction;
     }
-
   });
 </script>

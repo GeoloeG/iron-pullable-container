@@ -37,6 +37,7 @@
   ],
   "dependencies": {
     "polymer": "Polymer/polymer#^1.1.0",
+    "paper-styles": "PolymerElements/paper-styles#^1.0.0",
     "spinkit": "spinkit#^1.2.0"
   },
   "devDependencies": {
