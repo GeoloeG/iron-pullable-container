@@ -1,19 +1,19 @@
-[![Bower version](https://badge.fury.io/bo/iron-swipeable-pages.svg)](https://badge.fury.io/bo/iron-swipeable-pages)
-[![Build Status](https://travis-ci.org/MeTaNoV/iron-swipeable-pages.svg?branch=master)](https://travis-ci.org/MeTaNoV/iron-swipeable-pages)
-[![Dependency Status](https://gemnasium.com/MeTaNoV/iron-swipeable-pages.svg)](https://gemnasium.com/MeTaNoV/iron-swipeable-pages)
+[![Bower version](https://badge.fury.io/bo/iron-pullable-pages.svg)](https://badge.fury.io/bo/iron-pullable-pages)
+[![Build Status](https://travis-ci.org/MeTaNoV/iron-pullable-pages.svg?branch=master)](https://travis-ci.org/MeTaNoV/iron-pullable-pages)
+[![Dependency Status](https://gemnasium.com/MeTaNoV/iron-pullable-pages.svg)](https://gemnasium.com/MeTaNoV/iron-pullable-pages)
 
-`<iron-swipeable-pages>` manages a set of pages and provides the ability to switch between them by swiping gesture.
+`<iron-pullable-pages>` manages a set of pages and provides the ability to switch between them by swiping gesture.
 
 ## Demo
 
-[https://metanov.github.io/iron-swipeable-pages/](https://metanov.github.io/iron-swipeable-pages/components/iron-swipeable-pages/demo/)
+[https://metanov.github.io/iron-pullable-pages/](https://metanov.github.io/iron-pullable-pages/components/iron-pullable-pages/demo/)
 
 ## Install
 
 Install the component using [Bower](http://bower.io/):
 
 ```sh
-$ bower install iron-swipeable-pages --save
+$ bower install iron-pullable-pages --save
 ```
 
 ## Usage
@@ -21,20 +21,20 @@ $ bower install iron-swipeable-pages --save
 Import Custom Element:
 
 ```html
-<link rel="import" href="bower_components/iron-swipeable-pages/iron-swipeable-pages.html">
+<link rel="import" href="bower_components/iron-pullable-pages/iron-pullable-pages.html">
 ```
 
 And then use it:
 
 ```html
-<iron-swipeable-pages selected="0">
+<iron-pullable-pages selected="0">
   <div>One</div>
   <div>Two</div>
   <div>Three</div>
-</iron-swipeable-pages>
+</iron-pullable-pages>
 ```
 
-See the [Documentation](https://metanov.github.io/iron-swipeable-pages/) for more options.
+See the [Documentation](https://metanov.github.io/iron-pullable-pages/) for more options.
 
 ## Discussing
 
@@ -52,5 +52,5 @@ If you have any questions, you can find me on the [Polymer Slack Channel](https:
 
 [MIT License](http://opensource.org/licenses/MIT) © Pascal Gula
 
-[![Throughput Graph](https://graphs.waffle.io/MeTaNoV/iron-swipeable-pages/throughput.svg)](https://waffle.io/MeTaNoV/iron-swipeable-pages/metrics)
+[![Throughput Graph](https://graphs.waffle.io/MeTaNoV/iron-pullable-pages/throughput.svg)](https://waffle.io/MeTaNoV/iron-pullable-pages/metrics)
 

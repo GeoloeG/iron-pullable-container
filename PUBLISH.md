@@ -1,6 +1,6 @@
 ## Registering to Bower
 
-`bower register iron-swipeable-pages git://github.com/MeTaNoV/iron-swipeable-pages.git`
+`bower register iron-pullable-pages git://github.com/MeTaNoV/iron-pullable-pages.git`
 
 ## Registering to Gemnasium
 
