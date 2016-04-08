@@ -31,6 +31,7 @@ Custom property | Description | Default
 ----------------|-------------|----------
 `--iron-pullable-container` | Mixin applied to the element. | `{}`
 `--iron-pullable-container-underlay` | Mixin applied to the underlay part. | `{}`
+`--iron-pullable-container-content` | Mixin applied to the content part. | `{}`
 
 @element iron-pullable-container
 @demo demo/index.html Standard Demo
@@ -41,42 +42,38 @@ Custom property | Description | Default
       :host {
         display: block;
         position: relative;
-        box-sizing: border-box;
+        overflow: hidden;
         @apply(--iron-pullable-container);
-      }
-      #container {
-        height: 100%;
       }
       #underlay {
-        text-align: center;
         background-color: var(--light-primary-color);
-        @apply(--iron-pullable-container);
         position: absolute;
         top: 0;
         height: 100%;
         width: 100%;
-        will-change: height;
+        @apply(--iron-pullable-container-underlay);
       }
       #spinner {
-        height: 50px;
+        margin-top: 5px;
+        opacity: 0;
+        @apply(--iron-pullable-container-spinner);
       }
       #content {
         background-color: var(--primary-background-color);
-        position: absolute;
-        bottom: 0;
-        width: 100%;
-        height: 100%;
-        will-change: height;
+        will-change: top, transform;
+        overflow: auto;
+        @apply(--iron-pullable-container-content);
       }
     </style>
     <div id="container">
       <div id="underlay">
-        <!-- TODO: enable custom spinner -->
-        <div id="spinner" class="sk-rotating-plane"></div>
-        <!-- <content select=".spinner"> -->
+        <template is="dom-if" if="[[spinner]]">
+          <div id="spinner" class="[[spinner]]"></div>          
+        </template>
+        <content select=".underlay">
       </div>
       <div id="content">
-        <content select=":not(.spinner)"></content>
+        <content select=":not(.underlay)"></content>
       </div>
     </div>
   </template>
@@ -95,14 +92,6 @@ Custom property | Description | Default
 
     properties: {
       /**
-       * If true, then the container will not allow swiping.
-       */
-      disabled: {
-        type: Boolean,
-        value: false
-      },
-
-      /**
        * The height of the pull area that acts as a threshold value.
        */
       pullHeight: {
@@ -111,17 +100,40 @@ Custom property | Description | Default
       },
 
       /**
-       * The CSS transition applied while pulling back.
+       * The default duration that the active state will last.
+       */
+      activeDuration: {
+        type: Number,
+        value: 1000
+      },
+
+      /**
+       * The CSS transition duration applied while pulling back.
        */
       transitionDuration: {
         type: String,
         value: '500ms'
       },
 
+      /**
+       * The CSS transition timing function applied while pulling back.
+       */
       transitionTimingFunction: {
         type: String,
         value: 'cubic-bezier(0.4, 0.0, 0.2, 1)'
-      }
+      },
+
+      spinner: {
+        type: String
+      },
+
+      /**
+       * If true, then the container will not allow swiping.
+       */
+      disabled: {
+        type: Boolean,
+        value: false
+      },
 
       // TODO: Add a tooltip option
       // TODO: Add 2 text label
@@ -134,9 +146,13 @@ Custom property | Description | Default
     ready: function() {
       this._pullComplete = false;
       this.setScrollDirection('x');
+      this.setScrollDirection('y');
     },
 
     attached: function() {
+      if (this.spinner) {
+        this.$$(spinner).style.height = this.pullHeight;        
+      }
       this.listen(this.$.content, 'webkitTransitionEnd', '_onTransitionEnd');
       this.listen(this.$.content, 'transitionend', '_onTransitionEnd');
     },
@@ -151,38 +167,53 @@ Custom property | Description | Default
         return;
 
       var track = event.detail;
+      if (track.dy < 0) {
+        return;
+      }
+
       if (track.state === 'start' && Math.abs(track.dx) < Math.abs(track.dy)) {
-        this._pullStarted = true;
+        this._scrollTop = this.$.content.scrollTop;
+        this.$.content.style.transition = 'none';
+        this.$.content.style.webkitTransition = 'none';
+        if (this._scrollTop == 0 ) {
+          this._pullStarted = true;
+        } else {
+          return;
+        }
         this._trackStart(track);
-      } else if (track.state === 'track' && this._pullStarted) {
+      } else if (track.state === 'track') {
+        if ((this._scrollTop - track.dy) <= 0 ) {
+          this._pullStarted = true;
+        } else {
+          this._pullStarted = false;
+          return;
+        }
         this._trackMove(track);
       } else if (track.state === 'end' && this._pullStarted) {
         this._trackEnd(track);
       }
     },
 
-    _trackStart: function(event) {
-      this.$.content.style.transition = 'none';
-      this.$.content.style.webkitTransition = 'none';
-
+    _trackStart: function(track) {
       // Prevent regular touchmove event (disables vertical scroll)
       window.addEventListener('touchmove', this._preventTouchMove);
-      this._animate(event.dy);
+      this._animate(track.dy - this._scrollTop);
     },
 
-    _trackMove: function(event) {
-      this._animate(event.dy);
+    _trackMove: function(track) {
+      this._animate(track.dy - this._scrollTop);
     },
 
-    _trackEnd: function(event) {
+    _trackEnd: function(track) {
+      // Enable regular touchmove event (enables vertical scroll again)
+      window.removeEventListener('touchmove', this._preventTouchMove);
       if (!this._pullStarted) {
         return;
       }
       // The element is pulled if it's moved past the height.
-      this._pullComplete = Math.abs(event.dy) > this.pullHeight;
+      this._pullComplete = Math.abs(track.dy - this._scrollTop) > this.pullHeight;
       // Restore the configured transition;
       this._computeTransition(this.$.content);
-      // this._computeTransition(this.$.underlay);
 
       if (this._pullComplete) {
         this._animate(this.pullHeight);
@@ -191,11 +222,12 @@ Custom property | Description | Default
       }
     },
 
+    _preventTouchMove: function (e) {
+      return e && e.preventDefault();
+    },
+
     _animate: function(y) {
-      var contentHeight = (this.offsetHeight - y) > 0 ? (this.offsetHeight - y) : 0;
-      // var underlayHeight = y > 0 ? y : 0;
-      this.$.content.style.height = contentHeight + "px";
-      // this.$.underlay.style.height = underlayHeight + "px";
+      this.translate3d('0px', y+'px', '0px', this.$.content);
     },
 
     _onTransitionEnd: function(event) {
@@ -203,15 +235,15 @@ Custom property | Description | Default
         this.fire('iron-pull');
         this.async(function() {
           this._animate(0);
-        }, 1000);
+        }, this.activeDuration);
         this._pullComplete = false;
+        this._pullStarted = false;
       }
-      this._pullStarted = false;
     },
 
     // Helper functions
     _computeTransition: function(node) {
-      node.style.transitionProperty = 'height';
+      node.style.transitionProperty = 'transform';
       node.style.transitionDuration = this.transitionDuration;
       node.style.transitionTimingFunction = this.transitionTimingFunction;
     }

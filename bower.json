@@ -46,6 +46,7 @@
     "iron-component-page": "MeTaNoV/iron-component-page#multiple-demo",
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.0.0",
     "iron-test-helpers": "PolymerElements/iron-test-helpers#^1.0.0",
+    "iron-ajax": "PolymerElements/iron-ajax#^1.0.0",
     "paper-styles": "PolymerElements/paper-styles#^1.0.0"
   }
 }

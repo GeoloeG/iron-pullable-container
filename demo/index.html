@@ -9,6 +9,8 @@
   <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
 
   <link rel="import" href="../iron-pullable-container.html">
+  <link rel="import" href="../../iron-ajax/iron-ajax.html">
+  <link rel="import" href="../../iron-flex-layout/iron-flex-layout.html">
   <link rel="import" href="../../paper-styles/default-theme.html">
   <link rel="import" href="../../paper-styles/demo-pages.html">
   <link rel="import" href="../../paper-styles/color.html">
@@ -16,44 +18,88 @@
   <style is="custom-style">
     /* If you want your things to transition nicely, you might want to disable
      * text selection on those elements. */
+    .container {
+      /*@apply(--layout-vertical);*/
+      height: 360px;
+    }
+    .extend {
+      /*@apply(--layout-flex);*/
+    }
+    .big {
+      font-size: 2em;
+    }
+
     iron-pullable-container {
-      height: 480px;
       -moz-user-select: none;
       -ms-user-select: none;
       -webkit-user-select: none;
       user-select: none;
       cursor: default;
+      --iron-pullable-container-content: {
+        background-color: var(--paper-grey-100);
+        max-width: 360px;
+      };
     }
+
   </style>
 
 </head>
 <body unresolved>
   <template is="dom-bind">
+    <iron-ajax
+       auto
+       url="https://api.github.com/repos/Polymer/Polymer/issues?state=open"
+       handle-as="json"
+       last-response="{{lastResponse}}">
+    </iron-ajax>
+
     <div class="horizontal-section-container">
       <div class="horizontal-section">
         <h1>Standard pull</h1>
-        <iron-pullable-container>
-          <h2>Pull me down!</h2>
-          <div>(I was pulled [[_nbPull1]] time(s))</div>
+        <iron-pullable-container on-iron-pull="_handlePull1">
+          <div class="container">
+            <div class="big">Pull me down!</div>
+            <div class="extend">(I was pulled [[_nbPull1]] time(s))</div>
+          </div>
         </iron-pullable-container>
       </div>
 
       <div class="horizontal-section">
         <h1>Pull with Spinners</h1>
-        <iron-pullable-container>
-          <h2>Pull me down!</h2>
-          <div>(I was pulled [[_nbPull2]] time(s))</div>
+        <iron-pullable-container on-iron-pull="_handlePull2">
+          <div class="container">
+            <div class="big">Pull me down!</div>
+            <div class="extend">(I was pulled [[_nbPull2]] time(s))</div>
+          </div>
         </iron-pullable-container>
       </div>
 
       <div class="horizontal-section">
         <h1>Pull with custom settings</h1>
         <iron-pullable-container>
-          <h2>Pull me down!</h2>
-          <div>(I was pulled [[_nbPull2]] time(s))</div>
+          <div class="container">
+            <h2>Polymer Issues:</h2>
+            <template is="dom-repeat" items="[[lastResponse]]" as="ghIssue">
+              <h3>Issue [[ghIssue.number]]</h3>
+              <span>[[ghIssue.title]]</span>
+            </template>
+          </div>
         </iron-pullable-container>
       </div>
     </div>
   </template>
+  <script>
+    var scope = document.querySelector('template[is="dom-bind"]');
+    scope._nbPull1 = 0;
+    scope._nbPull2 = 0;
+
+    scope._handlePull1 = function() {
+      scope._nbPull1++;
+    };
+
+    scope._handlePull2 = function() {
+      scope._nbPull2++;
+    };
+  </script>
 </body>
 </html>
