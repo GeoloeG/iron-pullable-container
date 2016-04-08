@@ -1,4 +1,7 @@
 <link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="./iron-pullable-container-styles.html">
+
 <!--
 `<iron-pullable-container>` is a container that can be pulled to provide a possible action.
 It supports a vertical transition, and the transition duration and properties
@@ -34,7 +37,7 @@ Custom property | Description | Default
 -->
 <dom-module id="iron-pullable-container">
   <template>
-    <style>
+    <style include="iron-pullable-container-styles">
       :host {
         display: block;
         position: relative;
@@ -54,6 +57,9 @@ Custom property | Description | Default
         width: 100%;
         will-change: height;
       }
+      #spinner {
+        height: 50px;
+      }
       #content {
         background-color: var(--primary-background-color);
         position: absolute;
@@ -66,6 +72,7 @@ Custom property | Description | Default
     <div id="container">
       <div id="underlay">
         <!-- TODO: enable custom spinner -->
+        <div id="spinner" class="sk-rotating-plane"></div>
         <!-- <content select=".spinner"> -->
       </div>
       <div id="content">
