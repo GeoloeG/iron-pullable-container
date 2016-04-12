@@ -1,19 +1,19 @@
-[![Bower version](https://badge.fury.io/bo/iron-pullable-pages.svg)](https://badge.fury.io/bo/iron-pullable-pages)
-[![Build Status](https://travis-ci.org/MeTaNoV/iron-pullable-pages.svg?branch=master)](https://travis-ci.org/MeTaNoV/iron-pullable-pages)
-[![Dependency Status](https://gemnasium.com/MeTaNoV/iron-pullable-pages.svg)](https://gemnasium.com/MeTaNoV/iron-pullable-pages)
+[![Bower version](https://badge.fury.io/bo/iron-pullable-container.svg)](https://badge.fury.io/bo/iron-pullable-container)
+[![Build Status](https://travis-ci.org/MeTaNoV/iron-pullable-container.svg?branch=master)](https://travis-ci.org/MeTaNoV/iron-pullable-container)
+[![Dependency Status](https://gemnasium.com/MeTaNoV/iron-pullable-container.svg)](https://gemnasium.com/MeTaNoV/iron-pullable-container)
 
-`<iron-pullable-pages>` manages a set of pages and provides the ability to switch between them by swiping gesture.
+`<iron-pullable-container>` manages a set of container and provides the ability to switch between them by swiping gesture.
 
 ## Demo
 
-[https://metanov.github.io/iron-pullable-pages/](https://metanov.github.io/iron-pullable-pages/components/iron-pullable-pages/demo/)
+[https://metanov.github.io/iron-pullable-container/](https://metanov.github.io/iron-pullable-container/components/iron-pullable-container/demo/)
 
 ## Install
 
 Install the component using [Bower](http://bower.io/):
 
 ```sh
-$ bower install iron-pullable-pages --save
+$ bower install iron-pullable-container --save
 ```
 
 ## Usage
@@ -21,20 +21,20 @@ $ bower install iron-pullable-pages --save
 Import Custom Element:
 
 ```html
-<link rel="import" href="bower_components/iron-pullable-pages/iron-pullable-pages.html">
+<link rel="import" href="bower_components/iron-pullable-container/iron-pullable-container.html">
 ```
 
 And then use it:
 
 ```html
-<iron-pullable-pages selected="0">
+<iron-pullable-container selected="0">
   <div>One</div>
   <div>Two</div>
   <div>Three</div>
-</iron-pullable-pages>
+</iron-pullable-container>
 ```
 
-See the [Documentation](https://metanov.github.io/iron-pullable-pages/) for more options.
+See the [Documentation](https://metanov.github.io/iron-pullable-container/) for more options.
 
 ## Discussing
 
@@ -52,5 +52,5 @@ If you have any questions, you can find me on the [Polymer Slack Channel](https:
 
 [MIT License](http://opensource.org/licenses/MIT) © Pascal Gula
 
-[![Throughput Graph](https://graphs.waffle.io/MeTaNoV/iron-pullable-pages/throughput.svg)](https://waffle.io/MeTaNoV/iron-pullable-pages/metrics)
+[![Throughput Graph](https://graphs.waffle.io/MeTaNoV/iron-pullable-container/throughput.svg)](https://waffle.io/MeTaNoV/iron-pullable-container/metrics)
 
