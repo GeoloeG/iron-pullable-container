@@ -1,11 +1,9 @@
 <link rel="import" href="../polymer/polymer.html">
 
-<link rel="import" href="./iron-pullable-container-styles.html">
-
 <!--
 `<iron-pullable-container>` is a container that can be pulled to provide a possible action.
 It supports a vertical transition, and the transition duration and properties
-can be customized. You can also add a configurable spinner when the action is ongoing.
+can be customized.
 
 Example:
 
@@ -38,7 +36,7 @@ Custom property | Description | Default
 -->
 <dom-module id="iron-pullable-container">
   <template>
-    <style include="iron-pullable-container-styles">
+    <style>
       :host {
         display: block;
         position: relative;
@@ -53,11 +51,6 @@ Custom property | Description | Default
         width: 100%;
         @apply(--iron-pullable-container-underlay);
       }
-      #spinner {
-        margin-top: 5px;
-        opacity: 0;
-        @apply(--iron-pullable-container-spinner);
-      }
       #content {
         background-color: var(--primary-background-color);
         will-change: top, transform;
@@ -67,10 +60,7 @@ Custom property | Description | Default
     </style>
     <div id="container">
       <div id="underlay">
-        <template is="dom-if" if="[[spinner]]">
-          <div id="spinner" class="[[spinner]]"></div>          
-        </template>
-        <content select=".underlay">
+        <content select=".underlay">          
       </div>
       <div id="content">
         <content select=":not(.underlay)"></content>
@@ -87,7 +77,13 @@ Custom property | Description | Default
     /**
      * Fired when the threshold has been reached.
      *
-     * @event iron-pull
+     * @event iron-pull-start
+     */
+
+    /**
+     * Fire when auto-closing after the specified duration.
+     *
+     * @event iron-pull-end
      */
 
     properties: {
@@ -123,10 +119,6 @@ Custom property | Description | Default
         value: 'cubic-bezier(0.4, 0.0, 0.2, 1)'
       },
 
-      spinner: {
-        type: String
-      },
-
       /**
        * If true, then the container will not allow swiping.
        */
@@ -135,8 +127,15 @@ Custom property | Description | Default
         value: false
       },
 
+      /**
+       * If true, automatically close the underlay after the active duration.
+       */
+      autoClose: {
+        type: Boolean,
+        value: false
+      }
+
       // TODO: Add a tooltip option
-      // TODO: Add 2 text label
     },
 
     listeners: {
@@ -150,9 +149,6 @@ Custom property | Description | Default
     },
 
     attached: function() {
-      if (this.spinner) {
-        this.$$(spinner).style.height = this.pullHeight;        
-      }
       this.listen(this.$.content, 'webkitTransitionEnd', '_onTransitionEnd');
       this.listen(this.$.content, 'transitionend', '_onTransitionEnd');
     },
@@ -160,6 +156,13 @@ Custom property | Description | Default
     detached: function() {
       this.unlisten(this.$.content, 'webkitTransitionEnd', '_onTransitionEnd');
       this.unlisten(this.$.content, 'transitionend', '_onTransitionEnd');
+    },
+
+    /**
+     * Close the underlay.
+     */
+    close: function() {
+      this._animate(0);
     },
 
     _onTrack: function(event) {
@@ -216,8 +219,10 @@ Custom property | Description | Default
       this._computeTransition(this.$.content);
 
       if (this._pullComplete) {
+        this.fire('iron-pull-start');
         this._animate(this.pullHeight);
       } else {
+        this.fire('iron-pull-end');
         this._animate(0);
       }
     },
@@ -232,10 +237,12 @@ Custom property | Description | Default
 
     _onTransitionEnd: function(event) {
       if (this._pullComplete) {
-        this.fire('iron-pull');
-        this.async(function() {
-          this._animate(0);
-        }, this.activeDuration);
+        if (this.autoClose) {
+          this.async(function() {
+            this.fire('iron-pull-end');
+            this._animate(0);
+          }, this.activeDuration);
+        }
         this._pullComplete = false;
         this._pullStarted = false;
       }

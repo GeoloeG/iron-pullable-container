@@ -14,6 +14,7 @@
   <link rel="import" href="../../paper-styles/default-theme.html">
   <link rel="import" href="../../paper-styles/demo-pages.html">
   <link rel="import" href="../../paper-styles/color.html">
+  <link rel="import" href="../../spinkit-element/spinkit-element.html">
 
   <style is="custom-style">
     /* If you want your things to transition nicely, you might want to disable
@@ -39,6 +40,14 @@
         background-color: var(--paper-grey-100);
         max-width: 360px;
       };
+      --iron-pullable-container-underlay: {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-justified);
+      };
+    }
+
+    spinkit-element {
+      margin-top: 5px;
     }
 
   </style>
@@ -47,16 +56,19 @@
 <body unresolved>
   <template is="dom-bind">
     <iron-ajax
-       auto
-       url="https://api.github.com/repos/Polymer/Polymer/issues?state=open"
-       handle-as="json"
-       last-response="{{lastResponse}}">
+      id="idAjax"
+      url="https://api.github.com/repos/Polymer/Polymer/issues?state=open"
+      handle-as="json"
+      last-response="{{lastResponse}}"
+      on-response="_handleResponse">
     </iron-ajax>
 
     <div class="horizontal-section-container">
       <div class="horizontal-section">
         <h1>Standard pull</h1>
-        <iron-pullable-container on-iron-pull="_handlePull1">
+        <iron-pullable-container 
+          on-iron-pull-start="_handlePullStart1"
+          auto-close>
           <div class="container">
             <div class="big">Pull me down!</div>
             <div class="extend">(I was pulled [[_nbPull1]] time(s))</div>
@@ -66,7 +78,12 @@
 
       <div class="horizontal-section">
         <h1>Pull with Spinners</h1>
-        <iron-pullable-container on-iron-pull="_handlePull2">
+        <iron-pullable-container 
+          on-iron-pull-start="_handlePullStart2"
+          on-iron-pull-end="_handlePullEnd2"
+          auto-close 
+          active-duration="3000">
+          <spinkit-element id="spinner2" class="underlay"></spinkit-element>
           <div class="container">
             <div class="big">Pull me down!</div>
             <div class="extend">(I was pulled [[_nbPull2]] time(s))</div>
@@ -76,7 +93,10 @@
 
       <div class="horizontal-section">
         <h1>Pull with custom settings</h1>
-        <iron-pullable-container>
+        <iron-pullable-container 
+          id="ipcAjax"
+          on-iron-pull-start="_handlePullAjax">
+          <spinkit-element id="spinnerAjax" class="underlay"></spinkit-element>
           <div class="container">
             <h2>Polymer Issues:</h2>
             <template is="dom-repeat" items="[[lastResponse]]" as="ghIssue">
@@ -93,12 +113,27 @@
     scope._nbPull1 = 0;
     scope._nbPull2 = 0;
 
-    scope._handlePull1 = function() {
+    scope._handlePullStart1 = function() {
       scope._nbPull1++;
     };
 
-    scope._handlePull2 = function() {
+    scope._handlePullStart2 = function() {
       scope._nbPull2++;
+      scope.$.spinner2.toggleAttribute("active", true);
+    };
+
+    scope._handlePullEnd2 = function() {
+      scope.$.spinner2.toggleAttribute("active", false);
+    };
+
+    scope._handlePullAjax = function() {
+      scope.$.spinnerAjax.toggleAttribute("active", true);
+      this.$.idAjax.generateRequest();
+    };
+
+    scope._handleResponse = function() {
+      scope.$.ipcAjax.close();
+      scope.$.spinnerAjax.toggleAttribute("active", false);
     };
   </script>
 </body>

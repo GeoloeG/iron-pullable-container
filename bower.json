@@ -1,6 +1,6 @@
 {
   "name": "iron-pullable-container",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "authors": [
     "Pascal Gula aka MeTaNoV <pascal.gula@gmail.com>"
   ],
@@ -37,8 +37,7 @@
   ],
   "dependencies": {
     "polymer": "Polymer/polymer#^1.1.0",
-    "paper-styles": "PolymerElements/paper-styles#^1.0.0",
-    "spinkit": "spinkit#^1.2.0"
+    "paper-styles": "PolymerElements/paper-styles#^1.0.0"
   },
   "devDependencies": {
     "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0",
@@ -47,6 +46,7 @@
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.0.0",
     "iron-test-helpers": "PolymerElements/iron-test-helpers#^1.0.0",
     "iron-ajax": "PolymerElements/iron-ajax#^1.0.0",
-    "paper-styles": "PolymerElements/paper-styles#^1.0.0"
+    "paper-styles": "PolymerElements/paper-styles#^1.0.0",
+    "spinkit-element": "spinkit-element#^1.0.0"
   }
 }
