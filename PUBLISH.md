@@ -1,6 +1,6 @@
 ## Registering to Bower
 
-`bower register iron-pullable-pages git://github.com/MeTaNoV/iron-pullable-pages.git`
+`bower register iron-pullable-container git://github.com/MeTaNoV/iron-pullable-container.git`
 
 ## Registering to Gemnasium
 
@@ -8,7 +8,7 @@ https://gemnasium.com/MeTaNoV/
 
 ## Registering to Waffle
 
-https://waffle.io/MeTaNoV/firebase-element-extended
+https://waffle.io/MeTaNoV/iron-pullable-container
 
 ## Registering to Travis
 

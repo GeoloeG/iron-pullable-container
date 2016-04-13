@@ -7,9 +7,27 @@ can be customized.
 
 Example:
 
-    <iron-pullable-container>
-      <h1>Pull Me!</h1>
+    <iron-pullable-container 
+      on-iron-pull-start="_handlePullStart"
+      on-iron-pull-end="_handlePullEnd"
+      auto-close>
+      <span id="spanId" class="underlay">Loading...</span>
+      <div class="container">
+        <div class="big">Pull me down!</div>
+        <div class="extend">(I was pulled [[_nbPull]] time(s))</div>
+      </div>
     </iron-pullable-container>
+ 
+    ...
+
+    scope._handlePullStart = function() {
+      scope._nbPull++;
+      scope.$.spanId.style.opacity = 1;
+    };
+
+    scope._handlePullEnd = function() {
+      scope.$.spanId.style.opacity = 0;
+    };
 
 It is a good idea to disable text selection in the container:
 
@@ -162,6 +180,7 @@ Custom property | Description | Default
      * Close the underlay.
      */
     close: function() {
+      this.fire('iron-pull-end');
       this._animate(0);
     },
 
@@ -222,7 +241,6 @@ Custom property | Description | Default
         this.fire('iron-pull-start');
         this._animate(this.pullHeight);
       } else {
-        this.fire('iron-pull-end');
         this._animate(0);
       }
     },

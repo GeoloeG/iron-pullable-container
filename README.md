@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/MeTaNoV/iron-pullable-container.svg?branch=master)](https://travis-ci.org/MeTaNoV/iron-pullable-container)
 [![Dependency Status](https://gemnasium.com/MeTaNoV/iron-pullable-container.svg)](https://gemnasium.com/MeTaNoV/iron-pullable-container)
 
-`<iron-pullable-container>` manages a set of container and provides the ability to switch between them by swiping gesture.
+`<iron-pullable-container>` enable a given container to be pulled and be notified if a certain threshold has been reached to take any actions, like refreshing the container's content.
 
 ## Demo
 
@@ -27,11 +27,27 @@ Import Custom Element:
 And then use it:
 
 ```html
-<iron-pullable-container selected="0">
-  <div>One</div>
-  <div>Two</div>
-  <div>Three</div>
-</iron-pullable-container>
+    <iron-pullable-container 
+      on-iron-pull-start="_handlePullStart"
+      on-iron-pull-end="_handlePullEnd"
+      auto-close>
+      <span id="spanId" class="underlay">Loading...</span>
+      <div class="container">
+        <div class="big">Pull me down!</div>
+        <div class="extend">(I was pulled [[_nbPull]] time(s))</div>
+      </div>
+    </iron-pullable-container>
+ 
+    ...
+
+    scope._handlePullStart = function() {
+      scope._nbPull++;
+      scope.$.spanId.style.opacity = 1;
+    };
+
+    scope._handlePullEnd = function() {
+      scope.$.spanId.style.opacity = 0;
+    };
 ```
 
 See the [Documentation](https://metanov.github.io/iron-pullable-container/) for more options.

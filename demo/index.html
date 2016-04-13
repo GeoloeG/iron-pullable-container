@@ -49,6 +49,11 @@
     spinkit-element {
       margin-top: 5px;
     }
+    #span1 {
+      margin-top: 15px;
+      color: var(--primary-background-color);
+      opacity: 0;
+    }
 
   </style>
 
@@ -68,7 +73,9 @@
         <h1>Standard pull</h1>
         <iron-pullable-container 
           on-iron-pull-start="_handlePullStart1"
+          on-iron-pull-end="_handlePullEnd1"
           auto-close>
+          <span id="span1" class="underlay">Loading...</span>
           <div class="container">
             <div class="big">Pull me down!</div>
             <div class="extend">(I was pulled [[_nbPull1]] time(s))</div>
@@ -115,6 +122,11 @@
 
     scope._handlePullStart1 = function() {
       scope._nbPull1++;
+      scope.$.span1.style.opacity = 1;
+    };
+
+    scope._handlePullEnd1 = function() {
+      scope.$.span1.style.opacity = 0;
     };
 
     scope._handlePullStart2 = function() {
