@@ -29,9 +29,9 @@ Example:
       scope.$.spanId.style.opacity = 0;
     };
 
-It is a good idea to disable text selection in the container:
+It could be a good idea to disable text selection in the container:
 
-    .swipe {
+    .pull {
       -moz-user-select: none;
       -ms-user-select: none;
       -webkit-user-select: none;
@@ -138,7 +138,7 @@ Custom property | Description | Default
       },
 
       /**
-       * If true, then the container will not allow swiping.
+       * If true, then the container will not allow pulling.
        */
       disabled: {
         type: Boolean,
@@ -162,6 +162,7 @@ Custom property | Description | Default
 
     ready: function() {
       this._pullComplete = false;
+      this._pullStarted = false;
       this.setScrollDirection('x');
       this.setScrollDirection('y');
     },
