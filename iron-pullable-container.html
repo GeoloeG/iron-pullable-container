@@ -59,7 +59,7 @@ Custom property | Description | Default
         display: block;
         position: relative;
         overflow: hidden;
-        @apply(--iron-pullable-container);
+        @apply --iron-pullable-container;
       }
       #underlay {
         background-color: var(--light-primary-color);
@@ -67,13 +67,13 @@ Custom property | Description | Default
         top: 0;
         height: 100%;
         width: 100%;
-        @apply(--iron-pullable-container-underlay);
+        @apply --iron-pullable-container-underlay;
       }
       #content {
         background-color: var(--primary-background-color);
         will-change: top, transform;
         overflow: auto;
-        @apply(--iron-pullable-container-content);
+        @apply --iron-pullable-container-content;
       }
     </style>
     <div id="container">
