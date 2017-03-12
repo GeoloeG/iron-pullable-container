@@ -1,12 +1,10 @@
-[![Bower version](https://badge.fury.io/bo/iron-pullable-container.svg)](https://badge.fury.io/bo/iron-pullable-container)
-[![Build Status](https://travis-ci.org/MeTaNoV/iron-pullable-container.svg?branch=master)](https://travis-ci.org/MeTaNoV/iron-pullable-container)
-[![Dependency Status](https://gemnasium.com/MeTaNoV/iron-pullable-container.svg)](https://gemnasium.com/MeTaNoV/iron-pullable-container)
+[![Published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg?style=flat-square)](https://www.webcomponents.org/element/GeoloeG/iron-pullable-container)
+
+# `<iron-pullable-container>`
+
+## Descripton
 
 `<iron-pullable-container>` enable a given container to be pulled and be notified if a certain threshold has been reached to take any actions, like refreshing the container's content.
-
-## Demo
-
-[https://metanov.github.io/iron-pullable-container/](https://metanov.github.io/iron-pullable-container/components/iron-pullable-container/demo/)
 
 ## Install
 
@@ -50,7 +48,11 @@ And then use it:
     };
 ```
 
-See the [Documentation](https://metanov.github.io/iron-pullable-container/) for more options.
+See the [Documentation](https://geoloeg.github.io/iron-pullable-container/) for more options.
+
+## More Demos
+
+[https://geoloeg.github.io/iron-pullable-container/](https://geoloeg.github.io/iron-pullable-container/components/iron-pullable-container/demo/)
 
 ## Discussing
 
@@ -63,10 +65,3 @@ If you have any questions, you can find me on the [Polymer Slack Channel](https:
 3. Commit your changes: `git commit -m 'Add some feature'`
 4. Push to the branch: `git push origin my-new-feature`
 5. Submit a pull request :D
-
-## License
-
-[MIT License](http://opensource.org/licenses/MIT) © Pascal Gula
-
-[![Throughput Graph](https://graphs.waffle.io/MeTaNoV/iron-pullable-container/throughput.svg)](https://waffle.io/MeTaNoV/iron-pullable-container/metrics)
-
