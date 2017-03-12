@@ -1,0 +1,71 @@
+{
+  "name": "spinkit-element",
+  "version": "1.0.1",
+  "authors": [
+    "Pascal Gula aka MeTaNoV <pascal.gula@gmail.com>"
+  ],
+  "description": "Configurable spinner element based on SpinKit",
+  "keywords": [
+    "web-component",
+    "web-components",
+    "web",
+    "component",
+    "components",
+    "custom",
+    "element",
+    "polymer",
+    "spinner",
+    "spinkit",
+    "wrapper",
+    "rotating-plane",
+    "double-bounce",
+    "wave",
+    "wandering-cubes",
+    "spinner-pulse",
+    "chasing-dots",
+    "three-bounce",
+    "circle",
+    "cube-grid",
+    "fading-circle",
+    "folding-cube"
+  ],
+  "main": "spinkit-element.html",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/MeTaNoV/spinkit-element.git"
+  },
+  "license": "MIT",
+  "homepage": "https://metanov.github.io/spinkit-element/",
+  "ignore": [
+    "/.*",
+    "/test/",
+    "/demo/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.2.0",
+    "paper-spinner": "PolymerElements/paper-spinner#^1.0.0"
+  },
+  "devDependencies": {
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0",
+    "web-component-tester": "^4.0.0",
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.0.0",
+    "iron-test-helpers": "PolymerElements/iron-test-helpers#^1.0.0",
+    "paper-checkbox": "PolymerElements/paper-checkbox#^1.1.0",
+    "paper-color-picker": "MeTaNoV/paper-color-picker#master",
+    "paper-dropdown-menu": "PolymerElements/paper-dropdown-menu#^1.0.0",
+    "paper-input": "PolymerElements/paper-input#^1.0.0",
+    "paper-item": "PolymerElements/paper-item#^1.0.0",
+    "paper-menu": "PolymerElements/paper-menu#^1.0.0"
+  },
+  "_release": "1.0.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "1.0.1",
+    "commit": "19437ff9c1e93bba36ee418b8874b90c6b526e0c"
+  },
+  "_source": "https://github.com/MeTaNoV/spinkit-element.git",
+  "_target": "^1.0.0",
+  "_originalSource": "spinkit-element"
+}

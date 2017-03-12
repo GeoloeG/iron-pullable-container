@@ -1,0 +1,277 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+`<iron-pullable-container>` is a container that can be pulled to provide a possible action.
+It supports a vertical transition, and the transition duration and properties
+can be customized.
+
+Example:
+
+    <iron-pullable-container 
+      on-iron-pull-start="_handlePullStart"
+      on-iron-pull-end="_handlePullEnd"
+      auto-close>
+      <span id="spanId" class="underlay">Loading...</span>
+      <div class="container">
+        <div class="big">Pull me down!</div>
+        <div class="extend">(I was pulled [[_nbPull]] time(s))</div>
+      </div>
+    </iron-pullable-container>
+ 
+    ...
+
+    scope._handlePullStart = function() {
+      scope._nbPull++;
+      scope.$.spanId.style.opacity = 1;
+    };
+
+    scope._handlePullEnd = function() {
+      scope.$.spanId.style.opacity = 0;
+    };
+
+It could be a good idea to disable text selection in the container:
+
+    .pull {
+      -moz-user-select: none;
+      -ms-user-select: none;
+      -webkit-user-select: none;
+      user-select: none;
+      cursor: default;
+    }
+
+### Styling
+
+The following custom properties / mixins are available for styling:
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--iron-pullable-container` | Mixin applied to the element. | `{}`
+`--iron-pullable-container-underlay` | Mixin applied to the underlay part. | `{}`
+`--iron-pullable-container-content` | Mixin applied to the content part. | `{}`
+
+@element iron-pullable-container
+@demo demo/index.html Standard Demo
+-->
+<dom-module id="iron-pullable-container">
+  <template>
+    <style>
+      :host {
+        display: block;
+        position: relative;
+        overflow: hidden;
+        @apply(--iron-pullable-container);
+      }
+      #underlay {
+        background-color: var(--light-primary-color);
+        position: absolute;
+        top: 0;
+        height: 100%;
+        width: 100%;
+        @apply(--iron-pullable-container-underlay);
+      }
+      #content {
+        background-color: var(--primary-background-color);
+        will-change: top, transform;
+        overflow: auto;
+        @apply(--iron-pullable-container-content);
+      }
+    </style>
+    <div id="container">
+      <div id="underlay">
+        <content select=".underlay">          
+      </div>
+      <div id="content">
+        <content select=":not(.underlay)"></content>
+      </div>
+    </div>
+  </template>
+</dom-module>
+
+<script>
+
+  Polymer({
+    is: 'iron-pullable-container',
+
+    /**
+     * Fired when the threshold has been reached.
+     *
+     * @event iron-pull-start
+     */
+
+    /**
+     * Fire when auto-closing after the specified duration.
+     *
+     * @event iron-pull-end
+     */
+
+    properties: {
+      /**
+       * The height of the pull area that acts as a threshold value.
+       */
+      pullHeight: {
+        type: Number,
+        value: 50
+      },
+
+      /**
+       * The default duration that the active state will last.
+       */
+      activeDuration: {
+        type: Number,
+        value: 1000
+      },
+
+      /**
+       * The CSS transition duration applied while pulling back.
+       */
+      transitionDuration: {
+        type: String,
+        value: '500ms'
+      },
+
+      /**
+       * The CSS transition timing function applied while pulling back.
+       */
+      transitionTimingFunction: {
+        type: String,
+        value: 'cubic-bezier(0.4, 0.0, 0.2, 1)'
+      },
+
+      /**
+       * If true, then the container will not allow pulling.
+       */
+      disabled: {
+        type: Boolean,
+        value: false
+      },
+
+      /**
+       * If true, automatically close the underlay after the active duration.
+       */
+      autoClose: {
+        type: Boolean,
+        value: false
+      }
+
+      // TODO: Add a tooltip option
+    },
+
+    listeners: {
+      'track': '_onTrack'
+    },
+
+    ready: function() {
+      this._pullComplete = false;
+      this._pullStarted = false;
+      this.setScrollDirection('x');
+      this.setScrollDirection('y');
+    },
+
+    attached: function() {
+      this.listen(this.$.content, 'webkitTransitionEnd', '_onTransitionEnd');
+      this.listen(this.$.content, 'transitionend', '_onTransitionEnd');
+    },
+
+    detached: function() {
+      this.unlisten(this.$.content, 'webkitTransitionEnd', '_onTransitionEnd');
+      this.unlisten(this.$.content, 'transitionend', '_onTransitionEnd');
+    },
+
+    /**
+     * Close the underlay.
+     */
+    close: function() {
+      this.fire('iron-pull-end');
+      this._animate(0);
+    },
+
+    _onTrack: function(event) {
+      if (this.disabled)
+        return;
+
+      var track = event.detail;
+      if (track.dy < 0) {
+        return;
+      }
+
+      if (track.state === 'start' && Math.abs(track.dx) < Math.abs(track.dy)) {
+        this._scrollTop = this.$.content.scrollTop;
+        this.$.content.style.transition = 'none';
+        this.$.content.style.webkitTransition = 'none';
+        if (this._scrollTop == 0 ) {
+          this._pullStarted = true;
+        } else {
+          return;
+        }
+        this._trackStart(track);
+      } else if (track.state === 'track') {
+        if ((this._scrollTop - track.dy) <= 0 ) {
+          this._pullStarted = true;
+        } else {
+          this._pullStarted = false;
+          return;
+        }
+        this._trackMove(track);
+      } else if (track.state === 'end' && this._pullStarted) {
+        this._trackEnd(track);
+      }
+    },
+
+    _trackStart: function(track) {
+      // Prevent regular touchmove event (disables vertical scroll)
+      window.addEventListener('touchmove', this._preventTouchMove);
+      this._animate(track.dy - this._scrollTop);
+    },
+
+    _trackMove: function(track) {
+      this._animate(track.dy - this._scrollTop);
+    },
+
+    _trackEnd: function(track) {
+      // Enable regular touchmove event (enables vertical scroll again)
+      window.removeEventListener('touchmove', this._preventTouchMove);
+      if (!this._pullStarted) {
+        return;
+      }
+      // The element is pulled if it's moved past the height.
+      this._pullComplete = Math.abs(track.dy - this._scrollTop) > this.pullHeight;
+      // Restore the configured transition;
+      this._computeTransition(this.$.content);
+
+      if (this._pullComplete) {
+        this.fire('iron-pull-start');
+        this._animate(this.pullHeight);
+      } else {
+        this._animate(0);
+      }
+    },
+
+    _preventTouchMove: function (e) {
+      return e && e.preventDefault();
+    },
+
+    _animate: function(y) {
+      this.translate3d('0px', y+'px', '0px', this.$.content);
+    },
+
+    _onTransitionEnd: function(event) {
+      if (this._pullComplete) {
+        if (this.autoClose) {
+          this.async(function() {
+            this.fire('iron-pull-end');
+            this._animate(0);
+          }, this.activeDuration);
+        }
+        this._pullComplete = false;
+        this._pullStarted = false;
+      }
+    },
+
+    // Helper functions
+    _computeTransition: function(node) {
+      node.style.transitionProperty = 'transform';
+      node.style.transitionDuration = this.transitionDuration;
+      node.style.transitionTimingFunction = this.transitionTimingFunction;
+    }
+  });
+</script>

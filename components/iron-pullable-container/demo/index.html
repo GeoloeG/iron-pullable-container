@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>iron-pullable-container demo</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+  <link rel="import" href="../iron-pullable-container.html">
+  <link rel="import" href="../../iron-ajax/iron-ajax.html">
+  <link rel="import" href="../../iron-flex-layout/iron-flex-layout.html">
+  <link rel="import" href="../../paper-styles/default-theme.html">
+  <link rel="import" href="../../paper-styles/demo-pages.html">
+  <link rel="import" href="../../paper-styles/color.html">
+  <link rel="import" href="../../spinkit-element/spinkit-element.html">
+
+  <style is="custom-style">
+    /* If you want your things to transition nicely, you might want to disable
+     * text selection on those elements. */
+    .container {
+      /*@apply(--layout-vertical);*/
+      height: 360px;
+    }
+    .extend {
+      /*@apply(--layout-flex);*/
+    }
+    .big {
+      font-size: 2em;
+    }
+
+    iron-pullable-container {
+      -moz-user-select: none;
+      -ms-user-select: none;
+      -webkit-user-select: none;
+      user-select: none;
+      cursor: default;
+      --iron-pullable-container-content: {
+        background-color: var(--paper-grey-100);
+        max-width: 360px;
+      };
+      --iron-pullable-container-underlay: {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-justified);
+      };
+    }
+
+    spinkit-element {
+      margin-top: 5px;
+    }
+    #span1 {
+      margin-top: 15px;
+      color: var(--primary-background-color);
+      opacity: 0;
+    }
+
+  </style>
+
+</head>
+<body unresolved>
+  <template is="dom-bind">
+    <iron-ajax
+      id="idAjax"
+      url="https://api.github.com/repos/Polymer/Polymer/issues?state=open"
+      handle-as="json"
+      last-response="{{lastResponse}}"
+      on-response="_handleResponse">
+    </iron-ajax>
+
+    <div class="horizontal-section-container">
+      <div class="horizontal-section">
+        <h1>Standard pull</h1>
+        <iron-pullable-container 
+          on-iron-pull-start="_handlePullStart1"
+          on-iron-pull-end="_handlePullEnd1"
+          auto-close>
+          <span id="span1" class="underlay">Loading...</span>
+          <div class="container">
+            <div class="big">Pull me down!</div>
+            <div class="extend">(I was pulled [[_nbPull1]] time(s))</div>
+          </div>
+        </iron-pullable-container>
+      </div>
+
+      <div class="horizontal-section">
+        <h1>Pull with Spinners</h1>
+        <iron-pullable-container 
+          on-iron-pull-start="_handlePullStart2"
+          on-iron-pull-end="_handlePullEnd2"
+          auto-close 
+          active-duration="3000">
+          <spinkit-element id="spinner2" class="underlay"></spinkit-element>
+          <div class="container">
+            <div class="big">Pull me down!</div>
+            <div class="extend">(I was pulled [[_nbPull2]] time(s))</div>
+          </div>
+        </iron-pullable-container>
+      </div>
+
+      <div class="horizontal-section">
+        <h1>Pull with custom settings</h1>
+        <iron-pullable-container 
+          id="ipcAjax"
+          on-iron-pull-start="_handlePullAjax">
+          <spinkit-element id="spinnerAjax" class="underlay"></spinkit-element>
+          <div class="container">
+            <h2>Polymer Issues:</h2>
+            <template is="dom-repeat" items="[[lastResponse]]" as="ghIssue">
+              <h3>Issue [[ghIssue.number]]</h3>
+              <span>[[ghIssue.title]]</span>
+            </template>
+          </div>
+        </iron-pullable-container>
+      </div>
+    </div>
+  </template>
+  <script>
+    var scope = document.querySelector('template[is="dom-bind"]');
+    scope._nbPull1 = 0;
+    scope._nbPull2 = 0;
+
+    scope._handlePullStart1 = function() {
+      scope._nbPull1++;
+      scope.$.span1.style.opacity = 1;
+    };
+
+    scope._handlePullEnd1 = function() {
+      scope.$.span1.style.opacity = 0;
+    };
+
+    scope._handlePullStart2 = function() {
+      scope._nbPull2++;
+      scope.$.spinner2.toggleAttribute("active", true);
+    };
+
+    scope._handlePullEnd2 = function() {
+      scope.$.spinner2.toggleAttribute("active", false);
+    };
+
+    scope._handlePullAjax = function() {
+      scope.$.spinnerAjax.toggleAttribute("active", true);
+      this.$.idAjax.generateRequest();
+    };
+
+    scope._handleResponse = function() {
+      scope.$.ipcAjax.close();
+      scope.$.spinnerAjax.toggleAttribute("active", false);
+    };
+  </script>
+</body>
+</html>

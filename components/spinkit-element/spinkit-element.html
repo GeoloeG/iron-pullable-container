@@ -1,0 +1,235 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="../paper-spinner/paper-spinner-behavior.html">
+
+<link rel="import" href="spinkit-element-styles.html">
+
+<!--
+`<spinkit-element>`is a configurable spinner element based on [SpinKit](http://tobiasahlin.com/spinkit/).
+
+    <spinkit-element name="circle" active></spinkit-element>
+
+### Accessibility
+
+Alt attribute should be set to provide adequate context for accessibility. If not provided,
+it defaults to 'loading'.
+Empty alt can be provided to mark the element as decorative if alternative content is provided
+in another form (e.g. a text block following the spinner).
+
+    <paper-spinner alt="Loading contacts list" active></paper-spinner>
+
+### Styling
+
+The following mixin is available for styling:
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--spinkit-element-size` | Width/Height of the spinner | `40px`
+`--spinkit-element-color` | Color of the spinner | `--primary-background-color`
+
+@demo demo/index.html
+@hero hero.svg
+-->
+<dom-module id="spinkit-element">
+  <template>
+    <style include='spinkit-element-styles'>
+      :host {
+        display: inline-block;
+        position: relative;
+        width: var(--spinkit-element-size, 40px);
+        height: var(--spinkit-element-size, 40px);
+      }
+    </style>
+
+    <!-- rotating plane -->
+    <template is="dom-if" if="[[_checkSpinnerName(name, 'rotating-plane')]]" restamp>
+      <div class-name="sk-rotating-plane [[__computeContainerClasses(active, __coolingDown)]]"></div>
+    </template>
+
+    <!-- double bounce -->
+    <template is="dom-if" if="[[_checkSpinnerName(name, 'double-bounce')]]" restamp>
+      <div class-name="sk-double-bounce [[__computeContainerClasses(active, __coolingDown)]]">
+        <div class="sk-child sk-double-bounce1"></div>
+        <div class="sk-child sk-double-bounce2"></div>
+      </div>
+    </template>
+
+    <!-- wave -->
+    <template is="dom-if" if="[[_checkSpinnerName(name, 'wave')]]" restamp>
+      <div class-name="sk-wave [[__computeContainerClasses(active, __coolingDown)]]">
+        <div class="sk-child sk-rect1"></div>
+        <div class="sk-child sk-rect2"></div>
+        <div class="sk-child sk-rect3"></div>
+        <div class="sk-child sk-rect4"></div>
+        <div class="sk-child sk-rect5"></div>
+      </div>
+    </template>
+
+    <!-- wandering cubes -->
+    <template is="dom-if" if="[[_checkSpinnerName(name, 'wandering-cubes')]]" restamp>
+      <div class-name="sk-wandering-cubes [[__computeContainerClasses(active, __coolingDown)]]">
+        <div class="sk-child sk-cube1"></div>
+        <div class="sk-child sk-cube2"></div>
+      </div>
+    </template>
+
+    <!-- spinner pulse -->
+    <template is="dom-if" if="[[_checkSpinnerName(name, 'spinner-pulse')]]" restamp>
+      <div class-name="sk-spinner-pulse [[__computeContainerClasses(active, __coolingDown)]]"></div>
+    </template>
+
+    <!-- chasing dots -->
+    <template is="dom-if" if="[[_checkSpinnerName(name, 'chasing-dots')]]" restamp>
+      <div class-name="sk-chasing-dots [[__computeContainerClasses(active, __coolingDown)]]">
+        <div class="sk-child sk-dot1"></div>
+        <div class="sk-child sk-dot2"></div>
+      </div>
+    </template>
+
+    <!-- three bounce -->
+    <template is="dom-if" if="[[_checkSpinnerName(name, 'three-bounce')]]" restamp>
+      <div class-name="sk-three-bounce [[__computeContainerClasses(active, __coolingDown)]]">
+        <div class="sk-child sk-bounce1"></div>
+        <div class="sk-child sk-bounce2"></div>
+        <div class="sk-child sk-bounce3"></div>
+      </div>
+    </template>
+
+    <!-- circle -->
+    <template is="dom-if" if="[[_checkSpinnerName(name, 'circle')]]" restamp>
+      <div class-name="sk-circle [[__computeContainerClasses(active, __coolingDown)]]">
+        <div class="sk-child sk-circle1"></div>
+        <div class="sk-child sk-circle2"></div>
+        <div class="sk-child sk-circle3"></div>
+        <div class="sk-child sk-circle4"></div>
+        <div class="sk-child sk-circle5"></div>
+        <div class="sk-child sk-circle6"></div>
+        <div class="sk-child sk-circle7"></div>
+        <div class="sk-child sk-circle8"></div>
+        <div class="sk-child sk-circle9"></div>
+        <div class="sk-child sk-circle10"></div>
+        <div class="sk-child sk-circle11"></div>
+        <div class="sk-child sk-circle12"></div>
+      </div>
+    </template>
+
+    <!-- cube grid -->
+    <template is="dom-if" if="[[_checkSpinnerName(name, 'cube-grid')]]" restamp>
+      <div class-name="sk-cube-grid [[__computeContainerClasses(active, __coolingDown)]]">
+        <div class="sk-child sk-cube1"></div>
+        <div class="sk-child sk-cube2"></div>
+        <div class="sk-child sk-cube3"></div>
+        <div class="sk-child sk-cube4"></div>
+        <div class="sk-child sk-cube5"></div>
+        <div class="sk-child sk-cube6"></div>
+        <div class="sk-child sk-cube7"></div>
+        <div class="sk-child sk-cube8"></div>
+        <div class="sk-child sk-cube9"></div>
+      </div>
+    </template>
+
+    <!-- fading circle -->
+    <template is="dom-if" if="[[_checkSpinnerName(name, 'fading-circle')]]" restamp>
+      <div class-name="sk-fading-circle [[__computeContainerClasses(active, __coolingDown)]]">
+        <div class="sk-child sk-circle1"></div>
+        <div class="sk-child sk-circle2"></div>
+        <div class="sk-child sk-circle3"></div>
+        <div class="sk-child sk-circle4"></div>
+        <div class="sk-child sk-circle5"></div>
+        <div class="sk-child sk-circle6"></div>
+        <div class="sk-child sk-circle7"></div>
+        <div class="sk-child sk-circle8"></div>
+        <div class="sk-child sk-circle9"></div>
+        <div class="sk-child sk-circle10"></div>
+        <div class="sk-child sk-circle11"></div>
+        <div class="sk-child sk-circle12"></div>
+      </div>
+    </template>
+
+    <!-- folding cube -->
+    <template is="dom-if" if="[[_checkSpinnerName(name, 'folding-cube')]]" restamp>
+      <div class-name="sk-folding-cube [[__computeContainerClasses(active, __coolingDown)]]">
+        <div class="sk-child sk-cube1"></div>
+        <div class="sk-child sk-cube2"></div>
+        <div class="sk-child sk-cube4"></div>
+        <div class="sk-child sk-cube3"></div>
+      </div>
+    </template>
+
+
+  </template>
+  <script>
+    (function() {
+      var spinnerNames = [
+        'rotating-plane',
+        'double-bounce',
+        'wave',
+        'wandering-cubes',
+        'spinner-pulse',
+        'chasing-dots',
+        'three-bounce',
+        'circle',
+        'cube-grid',
+        'fading-circle',
+        'folding-cube'
+      ];
+
+      Polymer({
+        is: 'spinkit-element',
+
+        behaviors: [
+          Polymer.PaperSpinnerBehavior
+        ],
+
+        properties: {
+          /**
+           * Specifies the name of the spinner to be used.
+           */
+          name: {
+            type: String,
+            value: 'circle'
+          },
+          /**
+           * Specifies the size of the spinner to be used.
+           */
+          size: {
+            type: Number,
+            observer: '_onSizeChanged'
+          },
+          /**
+           * Specifies the size of the spinner to be used.
+           */
+          color: {
+            type: String,
+            observer: '_onColorChanged'
+          },
+        },
+
+        _checkSpinnerName: function(givenName, spinnerName) {
+          if (spinnerNames.indexOf(givenName) == -1) {
+            givenName = 'circle';
+          }
+          return givenName === spinnerName;
+        },
+
+        _onSizeChanged: function(size) {
+          this.customStyle['--spinkit-element-size'] = size+"px";
+          this.updateStyles();
+        },
+        _onColorChanged: function(color) {
+          this.customStyle['--spinkit-element-color'] = color;
+          this.updateStyles();
+        },
+
+        __reset: function() {
+          // we overload __reset for the warm-up not to reset values...
+          if (this.__coolingDown) {
+            this.active = false;
+            this.__coolingDown = false;
+          }
+        }
+      });
+    }());
+  </script>
+</dom-module>
+
