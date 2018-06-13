@@ -151,8 +151,16 @@ Custom property | Description | Default
       autoClose: {
         type: Boolean,
         value: false
-      }
+      },
 
+      /**
+       * Attribute to reflect that this component is pullable. use to style in css iron-pullable-container[pullable]
+       */
+       pullable: {
+        type: Boolean,
+        value: false,
+        reflectToAttribute : true
+      }
       // TODO: Add a tooltip option
     },
 
@@ -221,10 +229,12 @@ Custom property | Description | Default
       // Prevent regular touchmove event (disables vertical scroll)
       window.addEventListener('touchmove', this._preventTouchMove);
       this._animate(track.dy - this._scrollTop);
+      this.pullable = false;
     },
 
     _trackMove: function(track) {
       this._animate(track.dy - this._scrollTop);
+      this.pullable = Math.abs(track.dy - this._scrollTop) > this.pullHeight;
     },
 
     _trackEnd: function(track) {
@@ -244,6 +254,7 @@ Custom property | Description | Default
       } else {
         this._animate(0);
       }
+      this.pullable = false;
     },
 
     _preventTouchMove: function (e) {
